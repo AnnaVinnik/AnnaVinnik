@@ -3,7 +3,7 @@ class Worms
 		@last_position = [0, 0]
 		@next_position = [0, 0]
 		@direction = 0
-		@path = Array.new(3) { Array.new(4) { Array.new(5) }}
+		@path = Array.new(2) { Array.new(2) { Array.new(3) }}
 		@x = 0
 		@y = 0
 		#p @path
@@ -56,10 +56,32 @@ class Worms
 		p @next_position
 	end
 
+	def add_size_up
+		@path.push(Array.new(2) { Array.new(3) }) #add x
+		i = 0
+		while i < @path.size  #add y
+			@path[i].push( Array.new(3) )
+			i += 1
+		end
+	end
+
+	def add_size_down
+		@path.insert(0, Array.new(2) { Array.new(3) })
+		i = 0
+		while i < @path.size
+			@path[i].insert(0, Array.new(3))
+			i += 1
+		end
+
+	end
+	
 	def move(direction = 0)
-		find_direction(5)
-		find_next_position
-		path_filling
+		#find_direction(5)
+		#find_next_position
+		#path_filling
+		@path.insert(0, Array.new(2) { Array.new(3) })
+		@path[0].insert(0, Array.new(3))
+
 		p @path
 	end
 
