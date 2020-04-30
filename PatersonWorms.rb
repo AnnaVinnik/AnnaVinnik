@@ -10,6 +10,7 @@ class Worms
 		
 		@@rule_status[1][5] = 1
 		p @@rule_status
+		@count_real_rule = 0
 		@last_position = [0, 0]
 		@next_position = [0, 0]
 		@direction = 0
@@ -95,12 +96,11 @@ class Worms
 	#Rename on find rule
 	def check_condition  
 		number_rule = 0
-		new_path = Array.new(6) 
+		new_path = Array.new(6) {elem = 0}
 		i = 0
 		j = 0
 		n = 1
-		print "last "
-		p @path[@last_position[0]][@last_position[1]]
+		
 		while i < 6
 			if @path[@last_position[0]][@last_position[1]][i] == 'nil'
 				@path[@last_position[0]][@last_position[1]][i] = 0
@@ -109,22 +109,23 @@ class Worms
 
 			i += 1
 		end
-		print "New path"
-		p new_path
 		i = 0
-		p (@direction + 3) % 6
+		
 		while i < @@count_rule
 			
 			if new_path == @@rule_status[i]
-				puts "true"
-
 				return i
 			end
 			
 			i += 1
  		end
- 		abort "End"
-		
+ 		if (@count_real_rule >= @@count_rule)
+ 			abort "End"
+ 		end
+
+ 		@count_real_rule += 1
+		@@rule_status[@count_real_rule] = new_path 
+		check_condition
 	end
 
 	def move(direction = 0)
@@ -201,3 +202,4 @@ one.init
 #one.test_
 one.move
 
+#изменить начальный статус
