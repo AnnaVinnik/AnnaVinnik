@@ -1,15 +1,19 @@
+require 'ruby2d'
+
+set width: 850
+set height: 700
+set background: '#dbd7d2'
 
 class Worms
 
-	@@count_rule
-	@@rule_status
+	
 	def init
 			#Спрашивать у пользователя
-		@@count_rule = 2    
-		@@rule_status = Array.new(@@count_rule) { Array.new(6){elem = 0}}
+		@count_rule = 2    
+		@rule_status = Array.new(@count_rule) { Array.new(6){elem = 0}}
 		
-		@@rule_status[1][5] = 1
-		p @@rule_status
+		@rule_status[1][5] = 1
+		
 		@count_real_rule = 0
 		@last_position = [0, 0]
 		@next_position = [0, 0]
@@ -111,20 +115,20 @@ class Worms
 		end
 		i = 0
 		
-		while i < @@count_rule
+		while i < @count_rule
 			
-			if new_path == @@rule_status[i]
+			if new_path == @rule_status[i]
 				return i
 			end
 			
 			i += 1
  		end
- 		if (@count_real_rule >= @@count_rule)
+ 		if (@count_real_rule >= @count_rule)
  			abort "End"
  		end
 
  		@count_real_rule += 1
-		@@rule_status[@count_real_rule] = new_path 
+		@rule_status[@count_real_rule] = new_path 
 		check_condition
 	end
 
@@ -143,9 +147,6 @@ class Worms
 			number_rule = @rule[check_condition] 
 			print "number_rule = "
 			puts number_rule
-			
-				#Добавить поиск правила
-				
 			
 			find_direction(number_rule)
 
@@ -194,12 +195,50 @@ class Worms
 		puts "After "
 		p @path
 	end
+end
+$j = 50
+
+def init_field
+	
+	i = 10
+		#Line.new(x1: i, y1: $j, x2: i + 50, y2: 150, width: 4, color: '#a8a8a8')
+		while i < Window.width
+			#Line.new(x1: i, y1: 50, x2: i + 50, y2: 150, width: 4, color: '#a8a8a8')
+			Circle.new(x: i, y: 50, radius: 5, color: '#a8a8a8')
+			
+			Circle.new(x: i + 50, y: 150, radius: 5, color: '#a8a8a8')
+			Circle.new(x: i, y: 250, radius: 5, color: '#a8a8a8')
+
+			Circle.new(x: i + 50, y: 350, radius: 5, color: '#a8a8a8')
+			Circle.new(x: i, y: 450, radius: 5, color: '#a8a8a8')
+
+			Circle.new(x: i + 50, y: 550, radius: 5, color: '#a8a8a8')
+			Circle.new(x: i, y: 650, radius: 5, color: '#a8a8a8')
+
+			Circle.new(x: i + 50, y: 750, radius: 5, color: '#a8a8a8')
+			Circle.new(x: i, y: 850, radius: 5, color: '#a8a8a8')
+			
+			i += 110
+
+		end
+	
+		
+
+	#clear
 
 end
+
 
 one = Worms.new
 one.init
 #one.test_
+init_field
+
+update do 
+
+show
 one.move
+
+
 
 #изменить начальный статус
