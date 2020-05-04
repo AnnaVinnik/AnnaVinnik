@@ -13,7 +13,7 @@ class Worms
 		@rule_status = Array.new(@count_rule) { Array.new(6){elem = 0}}
 		
 		@rule_status[1][5] = 1
-		
+		@draw_path = []
 		@count_real_rule = 0
 		@last_position = [0, 0]
 		@next_position = [0, 0]
@@ -29,6 +29,10 @@ class Worms
 
 	
 
+	end
+
+	def get_path
+		@path
 	end
 
 	def find_next_position
@@ -124,12 +128,62 @@ class Worms
 			i += 1
  		end
  		if (@count_real_rule >= @count_rule)
- 			abort "End"
- 		end
+ 			#abort "End"
+ 			return 8
+ 		else
+	 		@count_real_rule += 1
+			@rule_status[@count_real_rule] = new_path 
+			check_condition
+		end
+	end
 
- 		@count_real_rule += 1
-		@rule_status[@count_real_rule] = new_path 
-		check_condition
+	def filling_field
+		i = 0
+		j = 0
+
+	
+		while i < (@path.size - 1)
+				size = @path[i].size - 1
+			while j < size do
+				#Line.new(x1: i, y1: j, x2: i + 50, y2: 150, width: 4, color: '#a8a8a8')
+				i += 1
+				j += 1
+			end
+			i += 1
+			init_field
+		end
+	end
+	
+	def change_path
+		i = 0
+		j = 0
+		k = 0
+		number = 0 
+		
+
+		for i in 0..(@path.size - 1)
+			for j in 0..(@path[0].size - 1)
+				for k in 0..5 
+					if @path[i][j][k] == 1
+						
+						if j % 2 == 1
+							@draw_path[number] = [i * 110 - 50,  j * 100 + 50]
+							number += 1
+						else
+							@draw_path[number] = [(i - 1) * 110  + 10, j * 100 + 50]
+							number += 1
+								
+						end
+
+						#Line.new(x1: 100 , y1: 1000, x2: k + 100 , y2: 150, width: 4, color: '#a8a8a8')
+					end
+					k += 1
+				end
+				j += 1
+			end
+			i += 1
+		end 
+		p @draw_path
 	end
 
 	def move(direction = 0)
@@ -144,7 +198,11 @@ class Worms
 				@condition[@size_condition][i] = @path[@last_position[0]][@last_position[1]][i]     ## Общее 
 				i += 1
 			end
-			number_rule = @rule[check_condition] 
+			number = check_condition
+			if number == 8
+				return 0
+			end
+			number_rule = @rule[number] 
 			print "number_rule = "
 			puts number_rule
 			
@@ -163,6 +221,8 @@ class Worms
 			
 
 			path_filling
+			filling_field
+			change_path
 			p @path[@last_position[0]][@last_position[1]]
 			print "last_position :"
 			p @last_position
@@ -218,11 +278,11 @@ def init_field
 			Circle.new(x: i + 50, y: 750, radius: 5, color: '#a8a8a8')
 			Circle.new(x: i, y: 850, radius: 5, color: '#a8a8a8')
 			
-			i += 110
 
+			i += 110
+		
 		end
 	
-		
 
 	#clear
 
@@ -232,13 +292,28 @@ end
 one = Worms.new
 one.init
 #one.test_
-init_field
 
-update do 
+one.move
+#update do
+	
+	fully_path = one.get_path
+	init_field
+	
+	size = fully_path.size - 1
+	size2 = fully_path[0].size - 1
+	i = 0
+	k = 0
+	l = 0
+	j = 0
+
+
+
+#end
+
+
+one.change_path
+
 
 show
-one.move
-
-
 
 #изменить начальный статус
