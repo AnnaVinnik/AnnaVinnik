@@ -11,7 +11,9 @@ class Worms
 			#Спрашивать у пользователя
 		@count_rule = 2    
 		@rule_status = Array.new(@count_rule) { Array.new(6){elem = 0}}
-		
+		@start_point = [0, 0]
+		@draw_start_point = []
+
 		@rule_status[1][5] = 1
 		@draw_path = []
 		@count_real_rule = 0
@@ -38,13 +40,13 @@ class Worms
 		if @direction == 0
 			@next_position[0] = @last_position[0] + 1
 
-		elsif @direction == 1
+		elsif @direction == 5
 			@next_position[1] -= 1 
 			if @last_position[1] % 2 == 1 
 				@next_position[0]= @last_position[0] + 1
 			end
 
-		elsif @direction == 2
+		elsif @direction == 4
 			@next_position[1] = @last_position[1] - 1
 			if @last_position[1] % 2 == 0 
 				@next_position[0] = @last_position[0] - 1
@@ -53,13 +55,13 @@ class Worms
 		elsif @direction == 3
 			@next_position[0] = @last_position[0] - 1
 
-		elsif @direction == 4
+		elsif @direction == 2
 			@next_position[1] = @last_position[1] + 1
 			if @last_position[1] % 2 == 0 
 				@next_position[0] = @last_position[0] - 1
 			end
 
-		elsif @direction == 5
+		elsif @direction == 1
 			@next_position[1] = @last_position[1] + 1
 			if @last_position[1] % 2 == 1 
 				@next_position[0] = @last_position[0] + 1
@@ -161,6 +163,12 @@ class Worms
 		k = 0
 		number = 0 
 		
+		if @start_point[1] % 2 == 1 
+			@draw_start_point = [@start_point[0] * 100, @start_point[1] * 100 + 50]
+		else 
+			@draw_start_point = [(@start_point[0] - 1) * 100 + 50 , @start_point[1] * 100 + 50]
+		end
+		p @draw_start_point
 		puts "path "
 		p @path
 		for i in 0..(@path.size - 1)
@@ -204,6 +212,7 @@ class Worms
 			i += 1
 		end 
 		p @draw_path
+
 	end
 
 	def draw
@@ -212,6 +221,9 @@ class Worms
 		for k in draw
 			Line.new(x1: k[0], y1: k[1], x2: k[2], y2: k[3], width: 4, color: '#a8a8a8')
 		end	
+		Circle.new(x: @draw_start_point[0], y: @draw_start_point[1], radius: 5, color: 'black')
+		
+
 	end
 
 	def move(direction = 0)
@@ -245,6 +257,8 @@ class Worms
 				@next_position[1] += 2
 				@last_position[0] += 2
 				@last_position[1] += 2
+				@start_point[0] += 2
+				@start_point[1] += 2
 			end
 			
 
@@ -260,7 +274,7 @@ class Worms
 			@last_position[0] = @next_position[0]
 			@last_position[1] = @next_position[1]
 			p @path[@last_position[0]][@last_position[1]]
-		
+			
 		#elsif @size_condition < @rule.size
 		#	return 0
 		#	@size_condition += 1
@@ -332,7 +346,7 @@ one.move
 #update do
 	
 	fully_path = one.get_path
-	init_field
+	#init_field
 	
 	size = fully_path.size - 1
 	size2 = fully_path[0].size - 1
