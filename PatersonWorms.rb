@@ -22,8 +22,7 @@ class Worms
 		@condition = Array.new(@rule.size) { Array.new(6) {elem = 0}}
 		@size_condition = 0
 		@path = Array.new(2) { Array.new(2) { Array.new(6) {elem = 0} }}
-		@x = 0
-		@y = 0
+		
 
 	
 
@@ -154,27 +153,48 @@ class Worms
 		end
 	end
 	
+	
+
 	def change_path
 		i = 0
 		j = 0
 		k = 0
 		number = 0 
 		
-
+		puts "path "
+		p @path
 		for i in 0..(@path.size - 1)
 			for j in 0..(@path[0].size - 1)
 				for k in 0..5 
 					if @path[i][j][k] == 1
-						
 						if j % 2 == 1
-							@draw_path[number] = [i * 110 - 50,  j * 100 + 50]
-							number += 1
+							@draw_path[number] = [i * 100,  j * 100 + 50]
+							
 						else
-							@draw_path[number] = [(i - 1) * 110  + 10, j * 100 + 50]
-							number += 1
-								
+							@draw_path[number] = [(i - 1) * 100  + 50, j * 100 + 50]
+									
 						end
 
+						if k == 0
+							@draw_path[number][2] = @draw_path[number][0] + 100
+							@draw_path[number][3] = @draw_path[number][1]
+						elsif k == 1
+							@draw_path[number][2] = @draw_path[number][0] + 50
+							@draw_path[number][3] = @draw_path[number][1] + 100
+						elsif k == 2
+							@draw_path[number][2] = @draw_path[number][0] - 50
+							@draw_path[number][3] = @draw_path[number][1] + 100
+						elsif k == 3
+							@draw_path[number][2] = @draw_path[number][0] - 100
+							@draw_path[number][3] = @draw_path[number][1]
+						elsif k == 4
+							@draw_path[number][2] = @draw_path[number][0] - 50
+							@draw_path[number][3] = @draw_path[number][1] - 100
+						elsif k == 5
+							@draw_path[number][2] = @draw_path[number][0] + 50
+							@draw_path[number][3] = @draw_path[number][1] - 100
+						end
+						number += 1
 						#Line.new(x1: 100 , y1: 1000, x2: k + 100 , y2: 150, width: 4, color: '#a8a8a8')
 					end
 					k += 1
@@ -184,6 +204,14 @@ class Worms
 			i += 1
 		end 
 		p @draw_path
+	end
+
+	def draw
+		draw = get_draw
+		size = draw.size - 1
+		for k in draw
+			Line.new(x1: k[0], y1: k[1], x2: k[2], y2: k[3], width: 4, color: '#a8a8a8')
+		end	
 	end
 
 	def move(direction = 0)
@@ -223,6 +251,7 @@ class Worms
 			path_filling
 			filling_field
 			change_path
+			draw
 			p @path[@last_position[0]][@last_position[1]]
 			print "last_position :"
 			p @last_position
@@ -255,12 +284,17 @@ class Worms
 		puts "After "
 		p @path
 	end
+
+	def get_draw
+		@draw_path
+	end
+
 end
 $j = 50
 
-def init_field
-	
-	i = 10
+def init_field 
+	draw = []
+	i = 50
 		#Line.new(x1: i, y1: $j, x2: i + 50, y2: 150, width: 4, color: '#a8a8a8')
 		while i < Window.width
 			#Line.new(x1: i, y1: 50, x2: i + 50, y2: 150, width: 4, color: '#a8a8a8')
@@ -279,10 +313,11 @@ def init_field
 			Circle.new(x: i, y: 850, radius: 5, color: '#a8a8a8')
 			
 
-			i += 110
+			i += 100
 		
 		end
-	
+
+		
 
 	#clear
 
