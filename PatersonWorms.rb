@@ -102,7 +102,6 @@ class Worms
 
 	#Add size left and right
 
-	#Rename on find rule
 	def check_condition  
 		number_rule = 0
 		new_path = Array.new(6) {elem = 0}
@@ -138,25 +137,6 @@ class Worms
 		end
 	end
 
-	def filling_field
-		i = 0
-		j = 0
-
-	
-		while i < (@path.size - 1)
-				size = @path[i].size - 1
-			while j < size do
-				#Line.new(x1: i, y1: j, x2: i + 50, y2: 150, width: 4, color: '#a8a8a8')
-				i += 1
-				j += 1
-			end
-			i += 1
-			init_field
-		end
-	end
-	
-	
-
 	def change_path
 		i = 0
 		j = 0
@@ -168,9 +148,7 @@ class Worms
 		else 
 			@draw_start_point = [(@start_point[0] - 1) * 100 + 50 , @start_point[1] * 100 + 50]
 		end
-		p @draw_start_point
-		puts "path "
-		p @path
+		
 		for i in 0..(@path.size - 1)
 			for j in 0..(@path[0].size - 1)
 				for k in 0..5 
@@ -211,14 +189,12 @@ class Worms
 			end
 			i += 1
 		end 
-		p @draw_path
-
 	end
 
 	def draw
-		draw = get_draw
-		size = draw.size - 1
-		for k in draw
+		
+		size = @draw_path.size - 1
+		for k in @draw_path
 			Line.new(x1: k[0], y1: k[1], x2: k[2], y2: k[3], width: 4, color: '#a8a8a8')
 		end	
 		Circle.new(x: @draw_start_point[0], y: @draw_start_point[1], radius: 5, color: 'black')
@@ -227,28 +203,20 @@ class Worms
 	end
 
 	def move(direction = 0)
-		print "Rules: "
-		p @rule
-
-		puts "first_position: [2, 2] "
-	
 		while true
-			i = 0
-			while i < 6
-				@condition[@size_condition][i] = @path[@last_position[0]][@last_position[1]][i]     ## Общее 
-				i += 1
-			end
+			#определяется правило
 			number = check_condition
 			if number == 8
 				return 0
 			end
-			number_rule = @rule[number] 
-			print "number_rule = "
-			puts number_rule
-			
-			find_direction(number_rule)
 
+			number_rule = @rule[number] 
+			
+			#Исходя из правила находится следующая точка
+
+			find_direction(number_rule)
 			find_next_position
+
 			#Увеличение поля
 			if (@next_position[0] < 0 || @next_position[1] < 0)
 				add_size_down
@@ -261,50 +229,20 @@ class Worms
 				@start_point[1] += 2
 			end
 			
-
+			# Заполнение путей и отрисовка
 			path_filling
-			filling_field
+			#filling_field
+			init_field
 			change_path
 			draw
-			p @path[@last_position[0]][@last_position[1]]
-			print "last_position :"
-			p @last_position
-			print "next_position: "
-			p @next_position
+
 			@last_position[0] = @next_position[0]
 			@last_position[1] = @next_position[1]
-			p @path[@last_position[0]][@last_position[1]]
-			
-		#elsif @size_condition < @rule.size
-		#	return 0
-		#	@size_condition += 1
-		#	i = 0
-		#	while i < 6
-		#		@condition[@size_condition][i] = @path[@next_position[0]][@next_position[1]][i]
-		#		i += 1
-		#	end
-			#puts "these 1"
-	
 
 		end
-
-
-		#p @path
-	end
-
-	def test_
-		p @path
-		add_size_down
-		puts "After "
-		p @path
-	end
-
-	def get_draw
-		@draw_path
 	end
 
 end
-$j = 50
 
 def init_field 
 	draw = []
@@ -328,13 +266,7 @@ def init_field
 			
 
 			i += 100
-		
 		end
-
-		
-
-	#clear
-
 end
 
 
