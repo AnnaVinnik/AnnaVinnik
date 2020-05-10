@@ -9,26 +9,25 @@ class Worms
 	
 	def init
 			#Спрашивать у пользователя
-		@count_rule = 2    
-		@rule_status = Array.new(@count_rule) { Array.new(6){elem = 0}}
 		@start_point = [0, 0]
-		@draw_start_point = []
 
-		@rule_status[1][5] = 1
+		@rule = [2, 2, 0]
+		@count_rule = 3    
+		@rule_status = Array.new(@count_rule) { Array.new(6){elem = 0}}
+		@count_real_rule = 2
+		@rule_status[1][3] = 1
+		
+
 		@draw_path = []
-		@count_real_rule = 0
+		@draw_start_point = []
+		
 		@last_position = [0, 0]
 		@next_position = [0, 0]
 		@direction = 0
-		@rule = [2, 2]
+		
 		@condition = Array.new(@rule.size) { Array.new(6) {elem = 0}}
 		@size_condition = 0
 		@path = Array.new(2) { Array.new(2) { Array.new(6) {elem = 0} }}
-		
-
-	
-
-	
 
 	end
 
@@ -39,34 +38,28 @@ class Worms
 	def find_next_position
 		if @direction == 0
 			@next_position[0] = @last_position[0] + 1
-
-		elsif @direction == 5
-			@next_position[1] -= 1 
-			if @last_position[1] % 2 == 1 
-				@next_position[0]= @last_position[0] + 1
-			end
-
-		elsif @direction == 4
-			@next_position[1] = @last_position[1] - 1
-			if @last_position[1] % 2 == 0 
-				@next_position[0] = @last_position[0] - 1
-			end
-
-		elsif @direction == 3
-			@next_position[0] = @last_position[0] - 1
-
-		elsif @direction == 2
-			@next_position[1] = @last_position[1] + 1
-			if @last_position[1] % 2 == 0 
-				@next_position[0] = @last_position[0] - 1
-			end
-
 		elsif @direction == 1
 			@next_position[1] = @last_position[1] + 1
 			if @last_position[1] % 2 == 1 
 				@next_position[0] = @last_position[0] + 1
 			end
-						
+		elsif @direction == 2
+			@next_position[1] = @last_position[1] + 1
+			if @last_position[1] % 2 == 0 
+				@next_position[0] = @last_position[0] - 1
+			end
+		elsif @direction == 3
+			@next_position[0] = @last_position[0] - 1
+		elsif @direction == 4
+			@next_position[1] = @last_position[1] - 1
+			if @last_position[1] % 2 == 0 
+				@next_position[0] = @last_position[0] - 1
+			end
+		elsif @direction == 5
+			@next_position[1] -= 1 
+			if @last_position[1] % 2 == 1 
+				@next_position[0]= @last_position[0] + 1
+			end		
 		end
 	end
 
@@ -77,7 +70,7 @@ class Worms
 
 	def path_filling
 		@path[@last_position[0]][@last_position[1]][@direction] = 1
-		@path[@next_position[0]][@next_position[1]][(@direction + 3) % 6] = 1   
+		@path[@next_position[0]][@next_position[1]][(@direction + 3) % 6] = 1
 	end
 
 	def add_size_up
@@ -113,26 +106,39 @@ class Worms
 			if @path[@last_position[0]][@last_position[1]][i] == 'nil'
 				@path[@last_position[0]][@last_position[1]][i] = 0
 			end
-			new_path[i] = ((i + @direction) % 6 ) * @path[@last_position[0]][@last_position[1]][i]
+			
+			if @path[@last_position[0]][@last_position[1]][i] == 1
+				n = i - @direction  
+				new_path[(n.abs % 6 )] =  1 
+			end
+			
 
 			i += 1
 		end
 		i = 0
+		print "\npath: "
+			p @path[@last_position[0]][@last_position[1]]
 		
 		while i < @count_rule
-			
+			print "i = #{i}\n"
+			puts "count_rule: #{@count_real_rule}"
+			print "direction = #{@direction}\n"
+			print "new_path: "
+			p new_path
+			print "rule_status: "
+			p @rule_status[i]
 			if new_path == @rule_status[i]
 				return i
 			end
 			
 			i += 1
  		end
- 		if (@count_real_rule >= @count_rule)
- 			#abort "End"
+ 		if (@count_real_rule == @count_rule)
  			return 8
  		else
-	 		@count_real_rule += 1
+ 			print "new rule status\n"
 			@rule_status[@count_real_rule] = new_path 
+			@count_real_rule += 1
 			check_condition
 		end
 	end
@@ -203,18 +209,16 @@ class Worms
 	end
 
 	def move(direction = 0)
-		while true
+		
 			#определяется правило
 			number = check_condition
 			if number == 8
-				return 0
+				return 1
 			end
-
-			number_rule = @rule[number] 
 			
 			#Исходя из правила находится следующая точка
 
-			find_direction(number_rule)
+			find_direction(@rule[number])
 			find_next_position
 
 			#Увеличение поля
@@ -239,7 +243,7 @@ class Worms
 			@last_position[0] = @next_position[0]
 			@last_position[1] = @next_position[1]
 
-		end
+			return 0
 	end
 
 end
@@ -272,27 +276,12 @@ end
 
 one = Worms.new
 one.init
-#one.test_
+ 
+ while one.move != 1
+ 	print "Hi))\n"
 
-one.move
-#update do
-	
-	fully_path = one.get_path
-	#init_field
-	
-	size = fully_path.size - 1
-	size2 = fully_path[0].size - 1
-	i = 0
-	k = 0
-	l = 0
-	j = 0
+ end
 
-
-
-#end
-
-
-one.change_path
 
 
 show
