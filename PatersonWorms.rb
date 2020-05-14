@@ -9,9 +9,9 @@ class Worms
 	
 	def init
 			#Спрашивать у пользователя
-		#puts "Введите начальную точку [x, y]"
-		#enter = gets.chomp
-		@start_point =  [0, 0]   #enter.chars.map {|c| c.to_i }
+		
+		
+		@start_point =  [0, 0]   
 
 		puts "Введите правила"
 		enter = gets.chomp
@@ -26,7 +26,9 @@ class Worms
 		@draw_path = []
 		@draw_start_point = @start_point
 		
-		@last_position = @start_point
+		puts "Введите начальную точку [x, y]"
+		enter = gets.chomp
+		@last_position = enter.chars.map {|c| c.to_i }
 		@next_position = [0, 0]
 		@direction = 0
 		
@@ -141,7 +143,6 @@ class Worms
  		if (@count_real_rule == @count_rule)
  			return 8
  		else
- 			print "new rule status\n"
 			@rule_status[@count_real_rule] = new_path 
 			@count_real_rule += 1
 			check_condition
@@ -294,19 +295,15 @@ init_field
 
 
 one.init
-#two.init
+two.init
 
-while one.move != 1
 
-end
-
-=begin
  while true
 	if (one.move && two.move) == 1
 		break
 	end
  end
-=end
+
 
 
 show
