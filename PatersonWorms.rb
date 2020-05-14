@@ -9,25 +9,34 @@ class Worms
 	
 	def init
 			#Спрашивать у пользователя
-		@start_point = [0, 0]
+		#puts "Введите начальную точку [x, y]"
+		#enter = gets.chomp
+		@start_point =  [0, 0]   #enter.chars.map {|c| c.to_i }
 
-		@rule = [2, 2, 0]
-		@count_rule = 3    
+		puts "Введите правила"
+		enter = gets.chomp
+		@rule = enter.chars.map {|c| c.to_i }
+		p @rule
+		@count_rule = @rule.size    
 		@rule_status = Array.new(@count_rule) { Array.new(6){elem = 0}}
 		@count_real_rule = 2
 		@rule_status[1][3] = 1
 		
 
 		@draw_path = []
-		@draw_start_point = []
+		@draw_start_point = @start_point
 		
-		@last_position = [0, 0]
+		@last_position = @start_point
 		@next_position = [0, 0]
 		@direction = 0
 		
 		@condition = Array.new(@rule.size) { Array.new(6) {elem = 0}}
 		@size_condition = 0
-		@path = Array.new(2) { Array.new(2) { Array.new(6) {elem = 0} }}
+		@path = Array.new(5) { Array.new(5) { Array.new(6) {elem = 0} }}
+
+		@color = "#%06x" % (rand * 0xffffff)
+
+	
 
 	end
 
@@ -74,17 +83,20 @@ class Worms
 	end
 
 	def add_size_up
-		@path.push(Array.new(2) { Array.new(3) }) #add x
+	
+		@path.push(Array.new(@path.size) { Array.new(6) {elem = 0} }) #add x
 		i = 0
 		while i < @path.size  #add y
-			@path[i].push( Array.new(3) {elem = 0} )
+			@path[i].push( Array.new(6) {elem = 0} )
 			i += 1
 		end
+
+		
 	end
 
 	def add_size_down
-		
-		@path.insert(0, Array.new(2) { Array.new(6) {elem = 0}})
+	
+		@path.insert(0, Array.new(@path.size) { Array.new(6) {elem = 0}})
 		i = 0
 		while i < @path.size
 			@path[i].insert(0, Array.new(6) {elem = 0})
@@ -116,17 +128,10 @@ class Worms
 			i += 1
 		end
 		i = 0
-		print "\npath: "
-			p @path[@last_position[0]][@last_position[1]]
 		
 		while i < @count_rule
-			print "i = #{i}\n"
-			puts "count_rule: #{@count_real_rule}"
-			print "direction = #{@direction}\n"
-			print "new_path: "
-			p new_path
-			print "rule_status: "
-			p @rule_status[i]
+			#puts "count_rule: #{@count_real_rule}"
+		
 			if new_path == @rule_status[i]
 				return i
 			end
@@ -199,9 +204,10 @@ class Worms
 
 	def draw
 		
+		
 		size = @draw_path.size - 1
 		for k in @draw_path
-			Line.new(x1: k[0], y1: k[1], x2: k[2], y2: k[3], width: 4, color: '#a8a8a8')
+			Line.new(x1: k[0], y1: k[1], x2: k[2], y2: k[3], width: 4, color: @color)
 		end	
 		Circle.new(x: @draw_start_point[0], y: @draw_start_point[1], radius: 5, color: 'black')
 		
@@ -212,10 +218,10 @@ class Worms
 		
 			#определяется правило
 			number = check_condition
+			
 			if number == 8
 				return 1
 			end
-			
 			#Исходя из правила находится следующая точка
 
 			find_direction(@rule[number])
@@ -232,13 +238,18 @@ class Worms
 				@start_point[0] += 2
 				@start_point[1] += 2
 			end
+			if (@next_position[0] >= @path.size || @next_position[1] >= @path[0].size)
+				add_size_up
+				add_size_up
+			end
 			
 			# Заполнение путей и отрисовка
 			path_filling
 			#filling_field
-			init_field
+			
 			change_path
 			draw
+
 
 			@last_position[0] = @next_position[0]
 			@last_position[1] = @next_position[1]
@@ -273,15 +284,29 @@ def init_field
 		end
 end
 
+count_player = 2
 
 one = Worms.new
+two = Worms.new
+
+init_field
+
+
+
 one.init
- 
- while one.move != 1
- 	print "Hi))\n"
+#two.init
 
+while one.move != 1
+
+end
+
+=begin
+ while true
+	if (one.move && two.move) == 1
+		break
+	end
  end
-
+=end
 
 
 show
